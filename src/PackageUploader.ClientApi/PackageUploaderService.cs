@@ -595,6 +595,9 @@ public class PackageUploaderService : IPackageUploaderService
     private async Task<GamePackage> WaitForPackageProcessingAsync(GameProduct product, GamePackage processingPackage, int minutesToWait, int checkIntervalMinutes, CancellationToken ct)
     {
         await Task.Delay(TimeSpan.FromSeconds(5), ct).ConfigureAwait(false);
+        // B&D 24/10/2024 Justin edit
+        // Commenting out this code as it feels like something was changed in the backend that can return a false fail. All the files are uploading correctly and can be published
+        // Will monitor to see for any official fixes
         processingPackage = await _ingestionHttpClient.GetPackageByIdAsync(product.ProductId, processingPackage.Id, ct).ConfigureAwait(false);
             
         var checkIntervalTimeSpan = TimeSpan.FromMinutes(checkIntervalMinutes);
@@ -610,7 +613,7 @@ public class PackageUploaderService : IPackageUploaderService
 
             minutesToWait -= checkIntervalMinutes;
         }
-
+        
         _logger.LogInformation(processingPackage.State switch
         {
             GamePackageState.InProcessing => "Package still in processing.",
